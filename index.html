@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafraSphere - Futuristic EV Charging</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splashScreen" class="screen active">
+        <div class="logo-container">
+            <div class="logo-background">
+                <div class="spinning-globe"></div>
+            </div>
+            <h1 class="app-title">SAFRASPHERE</h1>
+            <div class="loading-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Scanner Screen -->
+    <div id="qrScreen" class="screen">
+        <div class="header">
+            <h2>Scan Charger QR Code</h2>
+        </div>
+        <div class="scanner-container">
+            <video id="video" autoplay muted playsinline></video>
+            <canvas id="canvas" style="display: none;"></canvas>
+            <div class="scan-frame">
+                <div class="scan-line"></div>
+                <div class="corner top-left"></div>
+                <div class="corner top-right"></div>
+                <div class="corner bottom-left"></div>
+                <div class="corner bottom-right"></div>
+            </div>
+        </div>
+        <div class="scanner-status" id="scannerStatus">Position QR code within the frame</div>
+        <button class="btn-secondary" onclick="requestLocationPermission()">Enable Location</button>
+    </div>
+
+    <!-- Location Verification Screen -->
+    <div id="locationScreen" class="screen">
+        <div class="verification-container">
+            <div class="spinner"></div>
+            <h2>Verifying Location</h2>
+            <p id="locationStatus">Checking your location...</p>
+        </div>
+    </div>
+
+    <!-- Charging Screen -->
+    <div id="chargingScreen" class="screen">
+        <div class="header">
+            <h2>Charging in Progress</h2>
+            <div class="session-info">
+                <span>Session: <span id="sessionId">CS-001</span></span>
+                <span>Location: Karur, Tamil Nadu</span>
+            </div>
+        </div>
+        
+        <div class="charging-dashboard">
+            <div class="battery-display">
+                <div class="battery-icon">
+                    <div class="battery-level" id="batteryLevel"></div>
+                    <div class="battery-percentage" id="batteryPercentage">0%</div>
+                </div>
+            </div>
+            
+            <div class="charging-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="unitsConsumed">0.0</div>
+                    <div class="stat-label">kWh Consumed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="chargingCost">₹0.00</div>
+                    <div class="stat-label">Total Cost</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="chargingTime">00:00</div>
+                    <div class="stat-label">Duration</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-danger" id="stopChargingBtn" onclick="stopCharging()">
+            <span>Stop Charging</span>
+        </button>
+    </div>
+
+    <!-- Payment Screen -->
+    <div id="paymentScreen" class="screen">
+        <div class="header">
+            <h2>Complete Payment</h2>
+        </div>
+        
+        <div class="payment-summary">
+            <div class="summary-card">
+                <h3>Charging Summary</h3>
+                <div class="summary-row">
+                    <span>Units Consumed:</span>
+                    <span id="finalUnits">0.0 kWh</span>
+                </div>
+                <div class="summary-row">
+                    <span>Duration:</span>
+                    <span id="finalDuration">00:00</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total Amount:</span>
+                    <span id="finalAmount">₹0.00</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="payment-methods">
+            <div class="upi-payment">
+                <h3>Pay via UPI</h3>
+                <div class="qr-container">
+                    <div class="qr-placeholder">
+                        <div class="qr-code">
+                            <!-- UPI QR Code would be displayed here -->
+                            <div class="qr-pattern"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="upi-id">UPI ID: bsudharsana2@okhdfcbank</div>
+                <button class="btn-primary" onclick="confirmPayment()">
+                    <span>Confirm Payment</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div id="successScreen" class="screen">
+        <div class="success-container">
+            <div class="success-icon">
+                <div class="checkmark"></div>
+            </div>
+            <h2>Payment Successful!</h2>
+            <div class="receipt">
+                <h3>Digital Receipt</h3>
+                <div class="receipt-details">
+                    <div class="receipt-row">
+                        <span>Transaction ID:</span>
+                        <span id="transactionId">TXN-001</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Date & Time:</span>
+                        <span id="transactionDate"></span>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Location:</span>
+                        <span>Karur, Tamil Nadu</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span>Units:</span>
+                        <span id="receiptUnits">0.0 kWh</span>
+                    </div>
+                    <div class="receipt-row total">
+                        <span>Amount Paid:</span>
+                        <span id="receiptAmount">₹0.00</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="exitApp()">
+                <span>Exit</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Exit Screen -->
+    <div id="exitScreen" class="screen">
+        <div class="exit-container">
+            <div class="logo-small">
+                <div class="spinning-globe-small"></div>
+            </div>
+            <h2>Thank You!</h2>
+            <p>Drive safe and stay charged with SafraSphere</p>
+            <div class="farewell-animation">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
